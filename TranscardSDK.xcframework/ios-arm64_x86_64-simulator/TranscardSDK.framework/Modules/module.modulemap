@@ -1,0 +1,11 @@
+framework module TranscardSDK {
+  umbrella header "TranscardSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module TranscardSDK.Swift {
+  header "TranscardSDK-Swift.h"
+  requires objc
+}

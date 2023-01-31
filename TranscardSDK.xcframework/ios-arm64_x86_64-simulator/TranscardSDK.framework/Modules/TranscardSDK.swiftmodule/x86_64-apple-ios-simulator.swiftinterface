@@ -1,0 +1,253 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
+// swift-module-flags: -target x86_64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name TranscardSDK
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import CoreTelephony
+import Foundation
+import Network
+import Swift
+@_exported import TranscardSDK
+import _Concurrency
+import _StringProcessing
+public protocol ResponseFailure {
+  var errorFound: Swift.Bool { get }
+  var errorMessage: Swift.String? { get }
+  var errorCode: Swift.String? { get }
+}
+extension TranscardSDK.ResponseFailure {
+  public var error: TranscardSDK.TranscardError? {
+    get
+  }
+}
+public struct WebsiteLink : Swift.Codable {
+  public let name: Swift.String
+  public let url: Foundation.URL
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PushProvisioning : Swift.Codable, TranscardSDK.ResponseFailure {
+  public let opc: Swift.String?
+  public let cardLast4Digits: Swift.String?
+  public let cardNetwork: Swift.String?
+  public let cardholder: TranscardSDK.CardHolder?
+  public let errorFound: Swift.Bool
+  public let errorMessage: Swift.String?
+  public let errorCode: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct IssuerResponse : Swift.Codable {
+  public let activationData: Swift.String
+  public let ephemeralPublicKey: Swift.String
+  public let encryptedPassData: Swift.String
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func fetchRequiredData(productID: Swift.String, vehicleType: TranscardSDK.VehicleType) async throws -> TranscardSDK.RequiredData
+  #endif
+  public typealias FetchRequiredDataResult = Swift.Result<TranscardSDK.RequiredData, TranscardSDK.TranscardError>
+  public static func fetchRequiredData(productID: Swift.String, vehicleType: TranscardSDK.VehicleType, completion: @escaping ((TranscardSDK.Transcard.FetchRequiredDataResult) -> Swift.Void))
+}
+public struct CardHolder : Swift.Codable {
+  public let firstName: Swift.String?
+  public let lastName: Swift.String?
+  public let addressLine1: Swift.String?
+  public let addressLine2: Swift.String?
+  public let city: Swift.String?
+  public let stateProvince: Swift.String?
+  public let postalCode: Swift.String?
+  public let country: Swift.String?
+  public let phoneNumber: Swift.String?
+  public var fullName: Swift.String {
+    get
+  }
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func authenticate() async throws
+  #endif
+  public typealias AuthenticateResult = Swift.Result<TranscardSDK.OAuthToken, TranscardSDK.TranscardError>
+  public static func authenticate(completion: @escaping ((TranscardSDK.Transcard.AuthenticateResult) -> Swift.Void))
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func createPaymentAccount(data: Swift.Encodable) async throws -> TranscardSDK.PaymentAccount
+  #endif
+  public typealias CreatePaymentAccountResult = Swift.Result<TranscardSDK.PaymentAccount, TranscardSDK.TranscardError>
+  public static func createPaymentAccount(data: Swift.Encodable, completion: @escaping ((TranscardSDK.Transcard.CreatePaymentAccountResult) -> Swift.Void))
+}
+public struct ModelState : Swift.Codable {
+  public let firstName: [Swift.String]?
+  public let middleName: [Swift.String]?
+  public let lastName: [Swift.String]?
+  public let addressLine1: [Swift.String]?
+  public let addressLine2: [Swift.String]?
+  public let addressLine3: [Swift.String]?
+  public let state: [Swift.String]?
+  public let city: [Swift.String]?
+  public let zipCode: [Swift.String]?
+  public let birthDate: [Swift.String]?
+  public let socialSecurityNumber: [Swift.String]?
+  public let phoneNumber: [Swift.String]?
+  public let email: [Swift.String]?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct RequiredData : Swift.Codable, TranscardSDK.ResponseFailure {
+  public let isFirstNameRequired: Swift.Bool
+  public let isMiddleNameRequired: Swift.Bool
+  public let isLastNameRequired: Swift.Bool
+  public let addressFields: [TranscardSDK.AddressField]
+  public let isPhoneNumberRequired: Swift.Bool
+  public let isEmailRequired: Swift.Bool
+  public let isDomesticIdRequired: Swift.Bool
+  public let isDOBRequired: Swift.Bool
+  public let errorFound: Swift.Bool
+  public let errorMessage: Swift.String?
+  public let errorCode: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func fetchEncryptedCCData(adminNumber: Swift.String, certificates: [Foundation.Data], nonce: Foundation.Data, nonceSignature: Foundation.Data) async throws -> TranscardSDK.EncryptedCCData
+  #endif
+  public typealias FetchEncryptedCCDataResult = Swift.Result<TranscardSDK.EncryptedCCData, TranscardSDK.TranscardError>
+  public static func fetchEncryptedCCData(adminNumber: Swift.String, certificates: [Foundation.Data], nonce: Foundation.Data, nonceSignature: Foundation.Data, completion: @escaping ((TranscardSDK.Transcard.FetchEncryptedCCDataResult) -> Swift.Void))
+}
+public enum Environment {
+  case production
+  case staging
+  public static func == (a: TranscardSDK.Environment, b: TranscardSDK.Environment) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum TranscardError : Foundation.LocalizedError {
+  case noInternetConnection
+  case missingRequiredConfiguration(missingFields: Swift.String)
+  case unauthenticated
+  case requestError(message: Swift.String?, statusCode: Swift.Int, modelState: TranscardSDK.ModelState?)
+  case invalidResponse
+  case serviceError(message: Swift.String?, code: Swift.String?)
+  public var errorDescription: Swift.String? {
+    get
+  }
+  public var failureReason: Swift.String? {
+    get
+  }
+  public var failureModel: TranscardSDK.ModelState? {
+    get
+  }
+}
+public struct PaymentAccount : Swift.Codable, TranscardSDK.ResponseFailure {
+  public let paymentAccountId: Swift.Int?
+  public let routingNumber: Swift.String?
+  public let ddaNumber: Swift.String?
+  public let preCreatedAdminNumber: Swift.Int?
+  public let preCreatedAccountHolderId: Swift.Int?
+  public let embosingBatchId: Swift.Int?
+  public let errorFound: Swift.Bool
+  public let errorMessage: Swift.String?
+  public let errorCode: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Foundation.URL : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.StaticString)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.StaticString
+  public typealias StringLiteralType = Swift.StaticString
+  public typealias UnicodeScalarLiteralType = Swift.StaticString
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func fetchRequiredDisclosures(productID: Swift.String) async throws -> TranscardSDK.RequiredDisclosures
+  #endif
+  public typealias FetchRequiredDisclosuresResult = Swift.Result<TranscardSDK.RequiredDisclosures, TranscardSDK.TranscardError>
+  public static func fetchRequiredDisclosures(productID: Swift.String, completion: @escaping ((TranscardSDK.Transcard.FetchRequiredDisclosuresResult) -> Swift.Void))
+}
+public enum VehicleType : Swift.String {
+  case virtualCard
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct AddressField : Swift.Codable {
+  public let fieldName: Swift.String
+  public let isDisplayed: Swift.Bool
+  public let isRequired: Swift.Bool
+  public let defaultValue: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Transcard {
+}
+public struct RequiredDisclosures : Swift.Codable, TranscardSDK.ResponseFailure {
+  public let transcardTermsOfUse: Swift.String?
+  public let transcardPrivacyPolicy: Swift.String?
+  public let cardTermsAndConditions: Swift.String?
+  public let cardPrivacyPolicy: Swift.String?
+  public let errorFound: Swift.Bool
+  public let errorMessage: Swift.String?
+  public let errorCode: Swift.String?
+  public var links: [TranscardSDK.WebsiteLink] {
+    get
+  }
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Swift.Array : Swift.ExpressibleByDictionaryLiteral where Element == Foundation.URLQueryItem {
+  public init(dictionaryLiteral elements: (Swift.String, Swift.String?)...)
+  public typealias Key = Swift.String
+  public typealias Value = Swift.String?
+}
+extension TranscardSDK.Transcard {
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func fetchPushProvisioning(adminNumber: Swift.String) async throws -> TranscardSDK.PushProvisioning
+  #endif
+  public typealias FetchPushProvisioningResult = Swift.Result<TranscardSDK.PushProvisioning, TranscardSDK.TranscardError>
+  public static func fetchPushProvisioning(adminNumber: Swift.String, completion: @escaping ((TranscardSDK.Transcard.FetchPushProvisioningResult) -> Swift.Void))
+}
+public struct EncryptedCCData {
+  public let activationData: Foundation.Data
+  public let ephemeralPublicKey: Foundation.Data
+  public let encryptedPassData: Foundation.Data
+}
+public struct OAuthToken : Swift.Codable {
+  public let accessToken: Swift.String
+  public let tokenType: Swift.String
+  public let expiresIn: Swift.Int
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension TranscardSDK.Transcard {
+  public static func configure(environment: TranscardSDK.Environment, username: Swift.String, cardServicesAPIKey: Swift.String, paynuverAPIKey: Swift.String)
+}
+public struct IssuerRequest {
+  public let certificates: [Foundation.Data]
+  public let nonce: Foundation.Data
+  public let nonceSignature: Foundation.Data
+  public init(certificates: [Foundation.Data], nonce: Foundation.Data, nonceSignature: Foundation.Data)
+}
+extension TranscardSDK.IssuerRequest : Swift.CustomDebugStringConvertible {
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension Swift.Encodable {
+  public var jsonPrettyPrintedString: Swift.String? {
+    get
+  }
+}
+extension TranscardSDK.Environment : Swift.Equatable {}
+extension TranscardSDK.Environment : Swift.Hashable {}
+extension TranscardSDK.VehicleType : Swift.Equatable {}
+extension TranscardSDK.VehicleType : Swift.Hashable {}
+extension TranscardSDK.VehicleType : Swift.RawRepresentable {}
